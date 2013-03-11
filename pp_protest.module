@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * Constants 
+ */
+define("XW_PROTEST_URL", 'http://www.piratenpartei.de/2013/03/07/welttag-gegen-internetzensur-2013/');
+define("XW_PROTEST_IMAGE", 'protest.png');
+define("XW_PROTEST_TITLE", 'Welttag gegen Internetzensur <br>12.03.2013');
+define("XW_PROTEST_LONGTEXT", 'Wir zeigen uns solidarisch mit allen durch Überwachung und Zensur eingeschränkten Journalisten und Aktivisten weltweit. Die Organisationen Reporter ohne Grenzen und die Piratenpartei rufen am Welttag gegen Internetzensur zu Protesten auf. ');
+define("XW_PROTEST_MORE", 'Weitere Informationen bei <a href="http://www.reporter-ohne-grenzen.de/">Reporter ohne Grenzen</a>. <a href="http://wiki.piratenpartei.de/Welttag-gegen-Internetzensur-2013">Informationen, sowie Plugins und Banner</a> zur Teilnahme finden sich auf dem Wiki der Piratenpartei Deutschland.');
+
+define("XW_PROTEST_usecookie", false);
+define("XW_PROTEST_cookiename", 'seen_worldday2013');
+
+define("XW_TESTMODE", true);
+define("XW_PROTEST_date", '2013-03-12');
+define("XW_PROTEST_timestart",  8);
+define("XW_PROTEST_timeend",  20);
+define("XW_PROTEST_timezone", null);
+
+/**
+*
+*/
+function pp_protest_init() {
+	// get options
+		$xw_protest_opts = pp_protest_get_options();
+
+	// check date and time
+		$show = $xw_protest_opts['testmode'];
+		if (date('Y-m-d')== $xw_opts['protest_date']) {
+			if (date('H')>=$xw_opts['protest_timestart'] && date('H')<$xw_opts['protest_timeend']) {
+				$show = true;
+			}
+		}
+		if (!$show)
+			return;
+
+	// path
+		$path = drupal_get_path('module', 'pp_protest');
+
+	// addCSS
+		drupal_add_css($path.'/pp_protest.css');
+
+	// add JS
+		drupal_add_js($path.'/pp_protest.js');
+}
+
+
+/**
+ * Retrieve the options
+ */
+function pp_protest_get_options() {
+	#$xw_protest_opts = get_option( 'xw_protest', XW_PROTEST_date );
+	if ( ! is_array( $xw_protest_opts ) )
+		$xw_protest_opts = array( 'protest_date' => $xw_protest_opts );
+	
+	$xw_protest_opts = array_merge( array(
+		'protest_date'	    => XW_PROTEST_date,
+		'protest_timestart' => XW_PROTEST_timestart,
+		'protest_timeend'   => XW_PROTEST_timeend,
+		'protest_timezone'  => XW_PROTEST_timezone,
+		'usecookie'	    	=> XW_PROTEST_usecookie,
+		'cookiename'        => XW_PROTEST_cookiename,
+		'mainurl'	    	=> XW_PROTEST_URL,
+		'image'		    	=> XW_PROTEST_IMAGE,
+		'title'		    	=> XW_PROTEST_TITLE,
+		'longtext'	    	=> XW_PROTEST_LONGTEXT,
+		'moretext'	    	=> XW_PROTEST_MORE,
+		'testmode'			=> XW_TESTMODE,
+	), $xw_protest_opts );
+	#print_r($xw_protest_opts);
+	
+	return $xw_protest_opts;
+}
+
+function xw_protest_footercode() {
+    $xw_opts = pp_protest_get_options();
+    $xw_protest_path = drupal_get_path('module', 'pp_protest');
+	echo '<script type="text/javascript">
+	/* <![CDATA[ */';
+	echo '$(function () {  $(\'body\').append($(
+        \'<div id=\"protest\"><div><a href=\"#\" class=\"close\" tabindex=\"1\">X</a>\' + ';
+	if ($xw_opts['image']) {
+	    echo '\'<p>';
+	    if ($xw_opts['mainurl']) { echo '<a class=\"link\" href=\"'.$xw_opts['mainurl'].'\">'; }
+	    echo '<img src=\"';
+	    if (strpos($xw_opts['image'], 'http') === false) {
+		echo $xw_protest_path;
+	    } 
+	    echo $xw_opts['image'];	
+	    
+	    echo '\"';
+	    if ($xw_opts['title']) { echo ' alt=\"'.$xw_opts['title'].'\"'; }
+	    if ($xw_opts['longtext']) { echo ' longdesc=\"'.$xw_opts['longtext'].'\"'; }
+	    echo '>';
+	    if ($xw_opts['mainurl']) { echo '</a>'; }
+	    echo '</p>\' + ';
+	} else {
+	    if ($xw_opts['title']) { 
+		echo '\'<h1>';
+		if ($xw_opts['mainurl']) { echo '<a class=\"link\" href=\"'.$xw_opts['mainurl'].'\">'; }
+		echo $xw_opts['title'];
+		if ($xw_opts['mainurl']) { echo '</a>'; }
+		echo '</h1>'; 
+		echo '\' + ';
+	    }	    
+	    if ($xw_opts['longtext']) { echo '\'<p>'.$xw_opts['longtext'].'</p>\' + '; } 
+	}
+	
+        if ($xw_opts['moretext']) { echo '\'<p class=\"more\">'.$xw_opts['moretext'].'</p>\' + '; } 
+            
+        echo '\'</div>';
+        echo '</div>\' )); ';
+        echo '
+
+    $(\'#protest\').css(\'height\', $(window).height());
+
+    $(\'#protest .close\').click(function () {
+    	$(\'#protest\').fadeOut();
+    	return false;
+    });
+    if ($(window).width() >= 600) {
+	$(\'#protest\').fadeIn();
+    }
+});
+
+$(window).bind(\'resize\', function(){
+ 	$(\'#protest\').css(\'height\', $(window).height());
+});
+
+    ';
+    
+	echo '/* ]]> */
+      </script> ';
+}
+
+/**
+* Display help and module information.
+* @param path
+*   Which path of the site we're displaying help.
+* @param arg
+*   Array that holds the current path as would be returned from arg() function.
+* @return
+*   help text for the path.
+*/
+function pp_protest_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case "admin/help#pp_protest":
+      $output = '<p>'. t("Fügt das notwendige Javascript in den Header ein.").'</p>';
+      break;
+  }
+  return $output;
+} // function pp_newsletter_help
+
+
+/**
+* Valid permissions for this module
+* @return array An array of valid permissions for the pp_newsletter module
+*/
+#function pp_protest_perm() {
+#  return array('administer pp_protest');
+#} // function pp_newsletter_perm()
+
+?>

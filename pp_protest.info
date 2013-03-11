@@ -1,0 +1,7 @@
+; $Id$
+package = Piratenpartei
+name = Piratenpartei Protest
+description = Black Day Plugin for protest days like the world day against cyber censorship 2013. Plugin enables a dark colored notice.
+dependencies[] = jquery_update
+core = 6.x
+version = "6.x-1.0"
