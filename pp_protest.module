@@ -52,7 +52,7 @@ function pp_protest_init() {
 function pp_protest_get_options() {
 	#$xw_protest_opts = get_option( 'xw_protest', XW_PROTEST_date );
 	if ( ! is_array( $xw_protest_opts ) )
-		$xw_protest_opts = array( 'protest_date' => $xw_protest_opts );
+		$xw_protest_opts = array( 'protest_date' => XW_PROTEST_date );
 	
 	$xw_protest_opts = array_merge( array(
 		'protest_date'	    => XW_PROTEST_date,
