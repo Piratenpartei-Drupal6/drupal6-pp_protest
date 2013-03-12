@@ -27,8 +27,8 @@ function pp_protest_init() {
 
 	// check date and time
 		$show = $xw_protest_opts['testmode'];
-		if (date('Y-m-d')== $xw_opts['protest_date']) {
-			if (date('H')>=$xw_opts['protest_timestart'] && date('H')<$xw_opts['protest_timeend']) {
+		if (date('Y-m-d')== $xw_protest_opts['protest_date']) {
+			if (date('H')>=$xw_protest_opts['protest_timestart'] && date('H')<$xw_protest_opts['protest_timeend']) {
 				$show = true;
 			}
 		}
